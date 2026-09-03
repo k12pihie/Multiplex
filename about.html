@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>About</title>
+    <style>
+      body{font-family:system-ui;margin:0;padding:24px;background:#fafafa;color:#171717}.wrap{max-width:560px;margin:auto}.link{display:block;padding:17px;margin:12px 0;border:1px solid #ddd;border-radius:16px;background:#fff;color:inherit;text-decoration:none;font-weight:600}
+      </style>
+      </head>
+      <body>
+        <div class="wrap">
+          <a href="main.html">← Back</a>
+          <h1>About</h1>
+          <p>Crochet NovaStudio</p><a class="link" href="https://www.instagram.com/crochetnovastudio/" target="_blank" rel="noopener">  Instagram</a>
+<a class="link" href="#" onclick="openEmail(event)">
+  ✉ Email
+</a>
+
+<script>
+function openEmail(event) {
+  event.preventDefault();
+
+  const email = "crochetnovaastudioo@gmail.com";
+  const subject = " ";
+  const body = " ";
+
+  window.location.href =
+    "mailto:" + email +
+    "?subject=" + encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(body);
+}
+</script>
+          
+          </div></body></html>

@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Events</title>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,sans-serif;
+  background:#fafafa;
+  color:#171717;
+}
+
+.wrap{
+  max-width:650px;
+  margin:auto;
+  padding:18px;
+}
+
+.events{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.event-card{
+  overflow:hidden;
+  border:1px solid #e5e5e5;
+  border-radius:22px;
+  background:#fff;
+}
+
+.event-image{
+  width:100%;
+  display:block;
+  max-height:400px;
+  object-fit:cover;
+}
+
+.event-content{
+  padding:20px;
+}
+
+.event-title{
+  margin:0 0 8px;
+  font-size:22px;
+}
+
+.event-subtitle{
+  margin:0 0 8px;
+}
+
+.event-description{
+  line-height:1.6;
+}
+
+.event-button{
+  display:inline-block;
+  margin-top:12px;
+  padding:10px 16px;
+  border-radius:12px;
+  background:#171717;
+  color:#fff;
+  text-decoration:none;
+}
+
+.loading,
+.error,
+.empty{
+  padding:30px;
+  text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <h1>Events</h1>
+
+  <div id="events" class="events">
+    <div class="loading">
+      Loading events…
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+
+const EVENTS_URL =
+"https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQpkzFtzwii6gyOjk8Qb1gAvsBNDrQL8a9hS93qwKUhA-_zsNd9oHIgaQnH8dUQfxzwbAFzyXGlm3nN6kVrYfOEGylxRDH4OfMD7B2miI62IJdRwaP4gQwhUU46yZlcOuOPJggdeWnMf8IWbnryBt0D7PsxDKI58ew9utNuJ07udTJFWDMawPlljRQB7yr-AKQazslYm1klpqFUSYFZNqO_3MrSwyKwfOGfrdRjyIc-nNCUx5drVB21mRZkYTLjb35rOy_rGkOz7YPEpKwzxkoZR2ZA5g&lib=MduMBJXEHABZJ-ipAA0Phpy_ugQBqqrJo";
+
+
+const container = document.getElementById("events");
+
+
+/* =========================
+   LOAD EVENTS
+========================= */
+
+async function loadEvents(){
+
+  try{
+
+    const response = await fetch(EVENTS_URL);
+
+    if(!response.ok){
+      throw new Error("HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    console.log("API:", data);
+
+    /*
+      Supports:
+
+      {
+        "events":[...]
+      }
+
+      OR
+
+      [...]
+    */
+
+    const events =
+      Array.isArray(data)
+      ? data
+      : (data.events || []);
+
+    renderEvents(events);
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    container.innerHTML = `
+      <div class="error">
+        Unable to load events.
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   RENDER EVENTS
+========================= */
+
+function renderEvents(events){
+
+  if(!events.length){
+
+    container.innerHTML = `
+      <div class="empty">
+        No events available.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  container.innerHTML = "";
+
+
+  events.forEach(event => {
+
+    if(event.enabled === false){
+      return;
+    }
+
+
+    /*
+      Main structure:
+
+      id
+      eventName
+      contentScript
+    */
+
+    const id = event.id || "";
+
+    const eventName =
+      event.eventName || "Event";
+
+
+    let content = event.contentScript;
+
+
+    /*
+      If contentScript is stored
+      as JSON text in Google Sheets,
+      convert it into an object.
+    */
+
+    if(typeof content === "string"){
+
+      try{
+
+        content = JSON.parse(content);
+
+      }
+
+      catch(error){
+
+        content = {
+          type:"editorial",
+          title:content
+        };
+
+      }
+
+    }
+
+
+    content = content || {};
+
+
+    const card =
+      document.createElement("div");
+
+    card.className = "event-card";
+
+
+    /* =========================
+       IMAGE
+    ========================= */
+
+    if(
+      content.type === "image" &&
+      content.imageUrl
+    ){
+
+      const img =
+        document.createElement("img");
+
+      img.className = "event-image";
+
+      img.src = content.imageUrl;
+
+      img.alt =
+        content.title || eventName;
+
+      card.appendChild(img);
+
+    }
+
+
+    /* =========================
+       VIDEO
+    ========================= */
+
+    if(
+      content.type === "video" &&
+      content.videoUrl
+    ){
+
+      const video =
+        document.createElement("video");
+
+      video.className = "event-image";
+
+      video.src = content.videoUrl;
+
+      video.controls =
+        content.controls !== false;
+
+      video.autoplay =
+        content.autoplay === true;
+
+      video.loop =
+        content.loop === true;
+
+      video.playsInline = true;
+
+      card.appendChild(video);
+
+    }
+
+
+    /* =========================
+       CONTENT
+    ========================= */
+
+    const contentBox =
+      document.createElement("div");
+
+    contentBox.className =
+      "event-content";
+
+
+    const style =
+      content.style || {};
+
+
+    if(content.title){
+
+      const title =
+        document.createElement("h2");
+
+      title.className =
+        "event-title";
+
+      title.textContent =
+        content.title;
+
+      if(style.fontStyle === "italic"){
+        title.style.fontStyle =
+          "italic";
+      }
+
+      if(style.color){
+        title.style.color =
+          style.color;
+      }
+
+      contentBox.appendChild(title);
+
+    }
+
+
+    if(content.subtitle){
+
+      const subtitle =
+        document.createElement("p");
+
+      subtitle.className =
+        "event-subtitle";
+
+      subtitle.textContent =
+        content.subtitle;
+
+      contentBox.appendChild(subtitle);
+
+    }
+
+
+    if(content.description){
+
+      const description =
+        document.createElement("p");
+
+      description.className =
+        "event-description";
+
+      description.textContent =
+        content.description;
+
+      contentBox.appendChild(description);
+
+    }
+
+
+    /* =========================
+       AUDIENCE
+    ========================= */
+
+    if(content.audience){
+
+      const audience =
+        document.createElement("small");
+
+      audience.textContent =
+        content.audience;
+
+      contentBox.appendChild(audience);
+
+    }
+
+
+    /* =========================
+       ACTION BUTTON
+    ========================= */
+
+    if(
+      content.action &&
+      content.action.url
+    ){
+
+      const button =
+        document.createElement("a");
+
+      button.className =
+        "event-button";
+
+      button.href =
+        content.action.url;
+
+      button.target =
+        "_blank";
+
+      button.rel =
+        "noopener";
+
+      button.textContent =
+        content.action.label ||
+        "Explore";
+
+      contentBox.appendChild(button);
+
+    }
+
+
+    card.appendChild(contentBox);
+
+    container.appendChild(card);
+
+
+    /*
+      Useful for debugging
+    */
+
+    console.log(
+      "Event:",
+      id,
+      eventName,
+      content
+    );
+
+  });
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+loadEvents();
+
+</script>
+
+</body>
+</html>
