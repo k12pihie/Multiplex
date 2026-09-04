@@ -1296,7 +1296,152 @@ function attachMedia(
             );
 
         },
-        {
-            once:true
+                {
+            once: true
         }
+    );
+}
+
+function createCard(event, index) {
+    const card = document.createElement("article");
+    card.className = "event-card";
+
+    const mediaWrapper = document.createElement("div");
+    mediaWrapper.className = "event-media";
+
+    const content = document.createElement("div");
+    content.className = "event-content";
+
+    const title = document.createElement("h3");
+    title.className = "event-title";
+    title.textContent = event.title || "Event";
+
+    content.appendChild(title);
+
+    if (event.description) {
+        const description = document.createElement("p");
+        description.className = "event-description";
+        description.textContent = event.description;
+        content.appendChild(description);
+    }
+
+    const meta = document.createElement("div");
+    meta.className = "event-meta";
+
+    if (event.date) {
+        const date = document.createElement("span");
+        date.textContent = event.date;
+        meta.appendChild(date);
+    }
+
+    if (event.time) {
+        const time = document.createElement("span");
+        time.textContent = event.time;
+        meta.appendChild(time);
+    }
+
+    if (event.location) {
+        const location = document.createElement("span");
+        location.textContent = event.location;
+        meta.appendChild(location);
+    }
+
+    if (meta.children.length) {
+        content.appendChild(meta);
+    }
+
+    if (event.actionURL) {
+        const action = document.createElement("a");
+        action.className = "event-action";
+        action.href = event.actionURL;
+        action.target = "_blank";
+        action.rel = "noopener noreferrer";
+        action.textContent = event.actionLabel || "View Event";
+
+        content.appendChild(action);
+    }
+
+    if (event.mediaURL) {
+        attachMedia(
+            mediaWrapper,
+            event.mediaURL,
+            event.mediaType
+        );
+    }
+
+    if (event.badge) {
+        const badge = document.createElement("span");
+        badge.className = "event-badge";
+        badge.textContent = event.badge;
+        mediaWrapper.appendChild(badge);
+    }
+
+    card.appendChild(mediaWrapper);
+    card.appendChild(content);
+
+    return card;
+}
+
+function createDots(count) {
+    sequenceDots.innerHTML = "";
+
+    for (let i = 0; i < count; i++) {
+        const dot = document.createElement("span");
+
+        dot.className =
+            "sequence-dot" + (i === 0 ? " active" : "");
+
+        sequenceDots.appendChild(dot);
+    }
+}
+
+function updateDots(index) {
+    const dots =
+        sequenceDots.querySelectorAll(".sequence-dot");
+
+    dots.forEach((dot, i) => {
+        dot.classList.toggle(
+            "active",
+            i === index
+        );
+    });
+}
+
+const CACHE_KEY = "nova_events_fast_v3";
+const CACHE_TIME = 5 * 60 * 1000;
+
+function saveCache(data) {
+    try {
+        localStorage.setItem(
+            CACHE_KEY,
+            JSON.stringify({
+                time: Date.now(),
+                data
+            })
+        );
+    } catch (e) {}
+}
+
+function getCache() {
+    try {
+        const cached =
+            JSON.parse(
+                localStorage.getItem(CACHE_KEY)
+            );
+
+        if (!cached) return null;
+
+        if (
+            Date.now() - cached.time >
+            CACHE_TIME
+        ) {
+            return null;
+        }
+
+        return cached.data;
+
+    } catch (e) {
+        return null;
+    }
+      }
     
