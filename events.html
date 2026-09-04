@@ -3,91 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#ffffff">
 
 <title>Events</title>
 
 <style>
 * {
     box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-:root {
-    --bg: #ffffff;
-    --surface: #f7f7f8;
-    --text: #151515;
-    --muted: #777;
-    --border: rgba(0,0,0,.08);
-    --accent: #7c3aed;
-    --radius: 22px;
 }
 
 html,
 body {
-    width: 100%;
-    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    color: #111111;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-    background: var(--bg);
-    color: var(--text);
-    -webkit-font-smoothing: antialiased;
-}
-
-button,
-a {
-    -webkit-tap-highlight-color: transparent;
-}
-
-.app {
-    width: 100%;
-    max-width: 1200px;
-    margin: auto;
-    padding: 18px 14px 40px;
+    overflow-x: hidden;
 }
 
 /* =========================
-   SECTION HEADER
+   EVENTS SECTION
 ========================= */
 
-.section-header {
+.events-section {
+    width: 100%;
+    padding: 18px 14px 28px;
+}
+
+.events-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
-.section-title {
-    font-size: 25px;
+.events-title {
+    margin: 0;
+    font-size: 24px;
     font-weight: 800;
-    letter-spacing: -0.6px;
+    letter-spacing: -0.5px;
 }
 
-.section-dots {
-    font-size: 18px;
-    letter-spacing: 3px;
-    color: #aaa;
-    user-select: none;
+.sequence-dots {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 18px;
+}
+
+.sequence-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #c7c7c7;
+    transition:
+        width .2s ease,
+        background .2s ease,
+        transform .2s ease;
+}
+
+.sequence-dot.active {
+    width: 18px;
+    border-radius: 10px;
+    background: #111111;
 }
 
 /* =========================
-   EVENT GRID
+   HORIZONTAL EVENT CONTAINER
 ========================= */
 
-.events-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+.events-container {
+    width: 100%;
+
+    display: flex;
     gap: 12px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    scrollbar-width: none;
+
+    -webkit-overflow-scrolling: touch;
+
+    touch-action: pan-x;
+}
+
+.events-container::-webkit-scrollbar {
+    display: none;
 }
 
 /* =========================
@@ -96,51 +104,50 @@ a {
 
 .event-card {
     position: relative;
-    overflow: hidden;
 
-    background: var(--surface);
-    border: 1px solid var(--border);
+    flex: 0 0 100%;
 
-    border-radius: var(--radius);
-
-    contain: content;
-
-    transition:
-        transform .18s ease,
-        box-shadow .18s ease;
-}
-
-.event-card:active {
-    transform: scale(.985);
-}
-
-.event-media {
-    position: relative;
     width: 100%;
+
     aspect-ratio: 4 / 5;
 
     overflow: hidden;
-    background: #ececef;
+
+    border-radius: 22px;
+
+    background: #eeeeee;
+
+    scroll-snap-align: center;
+
+    user-select: none;
+
+    contain: layout paint;
 }
 
-.event-media img,
-.event-media video {
-    display: block;
+/* =========================
+   IMAGE
+========================= */
+
+.event-card img,
+.event-card video {
+    position: absolute;
+
+    inset: 0;
 
     width: 100%;
     height: 100%;
 
     object-fit: cover;
 
-    border: 0;
+    display: block;
 
     opacity: 0;
 
     transition: opacity .25s ease;
 }
 
-.event-media.loaded img,
-.event-media.loaded video {
+.event-card.media-ready img,
+.event-card.media-ready video {
     opacity: 1;
 }
 
@@ -150,26 +157,27 @@ a {
 
 .shimmer {
     position: absolute;
+
     inset: 0;
 
-    overflow: hidden;
+    z-index: 2;
 
     background:
         linear-gradient(
-            90deg,
-            #eeeeef 0%,
-            #f8f8f9 45%,
-            #eeeeef 90%
+            100deg,
+            #eeeeee 20%,
+            #f8f8f8 40%,
+            #eeeeee 60%
         );
 
     background-size: 220% 100%;
 
-    animation: shimmer 1.25s linear infinite;
-
-    z-index: 2;
+    animation:
+        shimmerMove 1.15s linear infinite;
 }
 
-@keyframes shimmer {
+@keyframes shimmerMove {
+
     0% {
         background-position: 200% 0;
     }
@@ -179,236 +187,134 @@ a {
     }
 }
 
-.shimmer.hide {
+.shimmer.hidden {
     opacity: 0;
-    pointer-events: none;
-    transition: opacity .2s ease;
+    visibility: hidden;
 }
 
 /* =========================
-   OVERLAY
+   CARD CONTENT
 ========================= */
 
-.event-overlay {
+.event-content {
     position: absolute;
-    inset: auto 0 0 0;
 
-    padding: 45px 12px 12px;
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-    color: white;
+    z-index: 4;
+
+    padding: 60px 18px 18px;
+
+    color: #ffffff;
 
     background:
         linear-gradient(
             transparent,
-            rgba(0,0,0,.78)
+            rgba(0,0,0,.82)
         );
-
-    z-index: 3;
 }
 
-.event-overlay h2 {
-    font-size: 16px;
-    line-height: 1.2;
-    font-weight: 750;
+.event-name {
+    margin: 0;
+
+    font-size: 22px;
+    line-height: 1.15;
+
+    font-weight: 800;
 
     display: -webkit-box;
+
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 
     overflow: hidden;
 }
 
-.event-overlay p {
-    margin-top: 4px;
+.event-id {
+    margin-top: 6px;
 
     font-size: 11px;
 
-    opacity: .85;
+    opacity: .72;
 
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
+    letter-spacing: .3px;
 }
 
 /* =========================
-   BADGE
+   SWIPE HINT
 ========================= */
 
-.event-badge {
+.swipe-indicator {
     position: absolute;
 
-    top: 9px;
-    left: 9px;
+    right: 14px;
+    top: 50%;
 
-    z-index: 5;
+    z-index: 8;
 
-    padding: 5px 8px;
+    width: 34px;
+    height: 34px;
 
-    border-radius: 999px;
+    border-radius: 50%;
 
-    background: rgba(0,0,0,.65);
+    display: grid;
+    place-items: center;
+
     color: white;
 
-    font-size: 10px;
-    font-weight: 700;
+    background: rgba(0,0,0,.38);
 
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+
+    pointer-events: none;
+
+    opacity: .8;
 }
 
-/* =========================
-   CONTENT
-========================= */
+.swipe-indicator::before {
+    content: "›";
 
-.event-content {
-    padding: 11px 12px 13px;
-}
+    font-size: 25px;
 
-.event-content-title {
-    font-size: 15px;
-    line-height: 1.25;
-    font-weight: 750;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-}
-
-.event-description {
-    margin-top: 5px;
-
-    color: var(--muted);
-
-    font-size: 11px;
-    line-height: 1.4;
-
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-}
-
-.event-meta {
-    display: flex;
-    flex-wrap: wrap;
-
-    gap: 5px;
-
-    margin-top: 9px;
-
-    color: var(--muted);
-
-    font-size: 10px;
-}
-
-.meta-item {
-    white-space: nowrap;
-}
-
-/* =========================
-   ACTION
-========================= */
-
-.event-action {
-    display: inline-flex;
-
-    width: 100%;
-
-    margin-top: 10px;
-
-    justify-content: center;
-    align-items: center;
-
-    min-height: 36px;
-
-    border-radius: 12px;
-
-    background: var(--text);
-    color: white;
-
-    text-decoration: none;
-
-    font-size: 12px;
-    font-weight: 700;
+    line-height: 1;
 }
 
 /* =========================
    EMPTY / ERROR
 ========================= */
 
-.state {
-    grid-column: 1 / -1;
+.events-state {
+    width: 100%;
 
-    padding: 50px 20px;
+    min-height: 100px;
 
-    text-align: center;
+    display: grid;
+    place-items: center;
 
-    color: var(--muted);
-}
+    color: #888888;
 
-.state h2 {
-    color: var(--text);
-
-    font-size: 18px;
-
-    margin-bottom: 5px;
-}
-
-.state p {
     font-size: 13px;
 }
 
 /* =========================
-   DESKTOP
+   MOBILE
 ========================= */
 
-@media (min-width: 700px) {
+@media (max-width: 480px) {
 
-    .app {
-        padding: 28px 24px 50px;
-    }
-
-    .section-title {
-        font-size: 30px;
-    }
-
-    .events-grid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-
-        gap: 18px;
-    }
-
-    .event-overlay h2 {
-        font-size: 18px;
-    }
-}
-
-@media (min-width: 1050px) {
-
-    .events-grid {
-        grid-template-columns:
-            repeat(4, minmax(0, 1fr));
-    }
-}
-
-/* =========================
-   REDUCED MOTION
-========================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    .shimmer {
-        animation: none;
+    .events-section {
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     .event-card {
-        transition: none;
+        border-radius: 20px;
+    }
+
+    .event-name {
+        font-size: 20px;
     }
 }
 </style>
@@ -416,20 +322,29 @@ a {
 
 <body>
 
-<main class="app">
+<section class="events-section">
 
-    <header class="section-header">
-        <h1 class="section-title">Events</h1>
-        <div class="section-dots">•••</div>
+    <header class="events-header">
+
+        <h2 class="events-title">
+            Events
+        </h2>
+
+        <div
+            id="sequenceDots"
+            class="sequence-dots"
+            aria-hidden="true">
+        </div>
+
     </header>
 
-    <section
-        id="events"
-        class="events-grid"
-        aria-label="Events">
-    </section>
+    <div
+        id="eventsContainer"
+        class="events-container">
+    </div>
 
-</main>
+</section>
+
 
 <script>
 "use strict";
@@ -438,140 +353,116 @@ a {
    API
 ========================================================= */
 
-const EVENT_API =
+const EVENTS_API =
 "https://script.google.com/macros/s/AKfycbzx0u4TmwyDUtzLA1SU8Ektg8IObAVJ_yg5aYuGmFU9E1kgW_OeR88Dx1jz74KUZkXRPA/exec";
-
-const eventsContainer =
-    document.getElementById("events");
 
 
 /* =========================================================
-   CACHE
+   ELEMENTS
 ========================================================= */
 
-const CACHE_KEY = "nova_events_cache_v2";
+const eventsContainer =
+    document.getElementById("eventsContainer");
 
-const CACHE_TIME =
-    5 * 60 * 1000;
+const sequenceDots =
+    document.getElementById("sequenceDots");
 
 
 /* =========================================================
    HELPERS
 ========================================================= */
 
-function isObject(value) {
-    return value !== null &&
-           typeof value === "object" &&
-           !Array.isArray(value);
-}
-
-function safeString(value, fallback = "") {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return fallback;
-    }
-
-    return String(value);
-}
-
 function escapeHTML(value) {
 
-    return safeString(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    return String(
+        value ?? ""
+    )
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 
 /* =========================================================
-   SHIMMER SKELETONS
+   EXTRACT EVENTS
+   Supports:
+   [
+      {...}
+   ]
+
+   OR
+
+   {
+      events: [...]
+   }
+
+   OR
+
+   {
+      data: [...]
+   }
+
+   OR
+
+   {
+      results: [...]
+   }
 ========================================================= */
 
-function showSkeletons(count = 4) {
+function extractEvents(json) {
 
-    const fragment =
-        document.createDocumentFragment();
-
-    for (let i = 0; i < count; i++) {
-
-        const card =
-            document.createElement("article");
-
-        card.className = "event-card";
-
-        card.innerHTML = `
-            <div class="event-media">
-                <div class="shimmer"></div>
-            </div>
-
-            <div class="event-content">
-
-                <div
-                    class="shimmer"
-                    style="
-                        position:relative;
-                        height:14px;
-                        border-radius:7px;
-                        margin-bottom:8px;
-                    ">
-                </div>
-
-                <div
-                    class="shimmer"
-                    style="
-                        position:relative;
-                        height:10px;
-                        width:70%;
-                        border-radius:6px;
-                    ">
-                </div>
-
-            </div>
-        `;
-
-        fragment.appendChild(card);
+    if (Array.isArray(json)) {
+        return json;
     }
 
-    eventsContainer.appendChild(fragment);
+    if (!json || typeof json !== "object") {
+        return [];
+    }
+
+    const possibleKeys = [
+        "events",
+        "data",
+        "results",
+        "items",
+        "records"
+    ];
+
+    for (const key of possibleKeys) {
+
+        if (Array.isArray(json[key])) {
+            return json[key];
+        }
+    }
+
+    return [];
 }
 
 
 /* =========================================================
-   MEDIA DETECTION
+   GET FIELD
 ========================================================= */
 
-function detectMediaType(url, type) {
+function getField(object, keys) {
 
-    if (type) {
-
-        const t =
-            safeString(type).toLowerCase();
-
-        if (t.includes("video"))
-            return "video";
-
-        if (t.includes("image"))
-            return "image";
+    if (!object ||
+        typeof object !== "object") {
+        return "";
     }
 
-    const source =
-        safeString(url).toLowerCase();
+    for (const key of keys) {
 
-    if (
-        source.includes(".mp4") ||
-        source.includes(".webm") ||
-        source.includes(".mov") ||
-        source.includes(".m4v")
-    ) {
-        return "video";
+        if (
+            object[key] !== undefined &&
+            object[key] !== null &&
+            object[key] !== ""
+        ) {
+            return object[key];
+        }
     }
 
-    return "image";
+    return "";
 }
 
 
@@ -579,350 +470,137 @@ function detectMediaType(url, type) {
    NORMALIZE EVENT
 ========================================================= */
 
-function normalizeEvent(raw) {
+function normalizeEvent(event) {
 
-    if (!isObject(raw))
+    if (!event ||
+        typeof event !== "object") {
         return null;
+    }
 
-    const content =
-        isObject(raw.content)
-            ? raw.content
-            : isObject(raw.details)
-                ? raw.details
-                : isObject(raw.info)
-                    ? raw.info
-                    : {};
-
-    const media =
-        isObject(raw.media)
-            ? raw.media
-            : {};
-
-    const image =
-        raw.image ||
-        raw.imageUrl ||
-        raw.imageURL ||
-        raw.photo ||
-        media.url ||
-        media.src ||
-        media.imageUrl ||
-        "";
-
-    const video =
-        raw.video ||
-        raw.videoUrl ||
-        raw.videoURL ||
-        media.videoUrl ||
-        "";
-
-    const mediaURL =
-        video ||
-        image ||
-        raw.poster ||
-        raw.thumbnail ||
-        "";
-
-    const mediaType =
-        detectMediaType(
-            mediaURL,
-            media.type ||
-            raw.mediaType ||
-            raw.type
+    const id =
+        getField(
+            event,
+            [
+                "id",
+                "eventId",
+                "eventID",
+                "ID",
+                "Id"
+            ]
         );
 
-    const title =
-        content.title ||
-        raw.title ||
-        raw.name ||
-        raw.eventName ||
-        "Untitled Event";
+    const name =
+        getField(
+            event,
+            [
+                "name",
+                "eventName",
+                "eventname",
+                "title",
+                "Event Name",
+                "Name",
+                "Title"
+            ]
+        );
 
-    const description =
-        content.description ||
-        raw.description ||
-        raw.desc ||
-        "";
+    const image =
+        getField(
+            event,
+            [
+                "image",
+                "imageUrl",
+                "imageURL",
+                "img",
+                "photo",
+                "thumbnail",
+                "src",
+                "url"
+            ]
+        );
+
+    const video =
+        getField(
+            event,
+            [
+                "video",
+                "videoUrl",
+                "videoURL"
+            ]
+        );
 
     return {
 
-        id:
-            raw.id ||
-            raw.eventId ||
-            raw.eventID ||
-            crypto.randomUUID(),
+        id: id || "",
 
-        title: safeString(title),
+        name:
+            name || "Event",
 
-        description:
-            safeString(description),
+        image:
+            image || "",
 
-        date:
-            safeString(
-                raw.date ||
-                content.date
-            ),
-
-        time:
-            safeString(
-                raw.time ||
-                content.time
-            ),
-
-        location:
-            safeString(
-                raw.location ||
-                raw.venue ||
-                content.location
-            ),
-
-        category:
-            safeString(
-                raw.category ||
-                content.category
-            ),
-
-        badge:
-            raw.badge ||
-            content.badge ||
-            "",
-
-        media: {
-
-            url: mediaURL,
-
-            type: mediaType,
-
-            poster:
-                raw.poster ||
-                media.poster ||
-                "",
-
-            alt:
-                media.alt ||
-                title
-        },
-
-        action:
-            raw.action ||
-            content.action ||
-            raw.button ||
-            null,
-
-        enabled:
-            raw.enabled !== false &&
-            raw.active !== false
+        video:
+            video || ""
     };
 }
 
 
 /* =========================================================
-   MEDIA
+   MEDIA TYPE
 ========================================================= */
 
-function renderMedia(event) {
-
-    const wrapper =
-        document.createElement("div");
-
-    wrapper.className =
-        "event-media";
-
-    const shimmer =
-        document.createElement("div");
-
-    shimmer.className =
-        "shimmer";
-
-    wrapper.appendChild(shimmer);
-
-    const url =
-        safeString(event.media.url);
+function isVideo(url) {
 
     if (!url) {
-
-        shimmer.remove();
-
-        wrapper.innerHTML += `
-            <div
-                style="
-                    position:absolute;
-                    inset:0;
-                    display:grid;
-                    place-items:center;
-                    color:#888;
-                    font-size:11px;
-                ">
-                No media
-            </div>
-        `;
-
-        return wrapper;
+        return false;
     }
 
+    const value =
+        String(url).toLowerCase();
 
-    if (
-        event.media.type === "video"
-    ) {
-
-        const video =
-            document.createElement("video");
-
-        video.src = url;
-
-        video.preload = "metadata";
-
-        video.playsInline = true;
-
-        video.muted = true;
-
-        video.controls = false;
-
-        video.loop = false;
-
-        if (event.media.poster)
-            video.poster =
-                event.media.poster;
-
-        video.addEventListener(
-            "loadeddata",
-            () => {
-
-                wrapper.classList.add(
-                    "loaded"
-                );
-
-                shimmer.classList.add(
-                    "hide"
-                );
-
-            },
-            { once: true }
-        );
-
-        video.addEventListener(
-            "error",
-            () => {
-
-                shimmer.classList.add(
-                    "hide"
-                );
-
-                video.style.display =
-                    "none";
-
-            },
-            { once: true }
-        );
-
-        wrapper.appendChild(video);
-
-    } else {
-
-        const img =
-            document.createElement("img");
-
-        img.src = url;
-
-        img.alt =
-            safeString(
-                event.media.alt,
-                event.title
-            );
-
-        img.loading = "lazy";
-
-        img.decoding = "async";
-
-        img.fetchPriority =
-            "low";
-
-        img.addEventListener(
-            "load",
-            () => {
-
-                wrapper.classList.add(
-                    "loaded"
-                );
-
-                shimmer.classList.add(
-                    "hide"
-                );
-
-            },
-            { once: true }
-        );
-
-        img.addEventListener(
-            "error",
-            () => {
-
-                shimmer.classList.add(
-                    "hide"
-                );
-
-            },
-            { once: true }
-        );
-
-        wrapper.appendChild(img);
-    }
-
-    return wrapper;
+    return (
+        value.includes(".mp4") ||
+        value.includes(".webm") ||
+        value.includes(".m4v") ||
+        value.includes(".mov")
+    );
 }
 
 
 /* =========================================================
-   OVERLAY
+   CREATE SKELETON
 ========================================================= */
 
-function renderOverlay(event) {
+function createSkeleton() {
 
-    if (
-        !event.title &&
-        !event.description
-    ) {
-        return null;
+    const fragment =
+        document.createDocumentFragment();
+
+    for (let i = 0; i < 2; i++) {
+
+        const card =
+            document.createElement("div");
+
+        card.className =
+            "event-card";
+
+        card.innerHTML = `
+            <div class="shimmer"></div>
+        `;
+
+        fragment.appendChild(card);
     }
 
-    const overlay =
-        document.createElement("div");
-
-    overlay.className =
-        "event-overlay";
-
-    overlay.innerHTML = `
-
-        <h2>
-            ${escapeHTML(event.title)}
-        </h2>
-
-        ${
-            event.description
-                ? `
-                <p>
-                    ${escapeHTML(
-                        event.description
-                    )}
-                </p>
-                `
-                : ""
-        }
-
-    `;
-
-    return overlay;
+    eventsContainer.appendChild(
+        fragment
+    );
 }
 
 
 /* =========================================================
-   EVENT CARD
+   CREATE EVENT CARD
 ========================================================= */
 
 function createEventCard(event) {
-
-    if (!event ||
-        event.enabled === false)
-        return null;
 
     const card =
         document.createElement("article");
@@ -930,46 +608,125 @@ function createEventCard(event) {
     card.className =
         "event-card";
 
-    card.dataset.eventId =
-        safeString(event.id);
+    card.dataset.id =
+        event.id;
+
+
+    const mediaURL =
+        event.video ||
+        event.image;
+
+
+    /* SHIMMER */
+
+    const shimmer =
+        document.createElement("div");
+
+    shimmer.className =
+        "shimmer";
+
+    card.appendChild(shimmer);
+
 
     /* MEDIA */
 
-    const media =
-        renderMedia(event);
+    if (mediaURL) {
 
-    card.appendChild(media);
+        if (isVideo(mediaURL)) {
 
+            const video =
+                document.createElement("video");
 
-    /* OVERLAY */
+            video.src =
+                mediaURL;
 
-    const overlay =
-        renderOverlay(event);
+            video.muted = true;
 
-    if (overlay)
-        media.appendChild(overlay);
+            video.playsInline = true;
 
+            video.preload = "metadata";
 
-    /* BADGE */
+            video.setAttribute(
+                "aria-label",
+                event.name
+            );
 
-    if (event.badge) {
+            video.addEventListener(
+                "loadeddata",
+                () => {
 
-        const badge =
-            document.createElement("div");
+                    card.classList.add(
+                        "media-ready"
+                    );
 
-        badge.className =
-            "event-badge";
+                    shimmer.classList.add(
+                        "hidden"
+                    );
 
-        badge.textContent =
-            typeof event.badge === "object"
-                ? safeString(
-                    event.badge.text
-                )
-                : safeString(
-                    event.badge
-                );
+                },
+                {
+                    once: true
+                }
+            );
 
-        media.appendChild(badge);
+            card.appendChild(video);
+
+        } else {
+
+            const image =
+                document.createElement("img");
+
+            image.src =
+                mediaURL;
+
+            image.alt =
+                event.name;
+
+            image.loading =
+                "lazy";
+
+            image.decoding =
+                "async";
+
+            image.addEventListener(
+                "load",
+                () => {
+
+                    card.classList.add(
+                        "media-ready"
+                    );
+
+                    shimmer.classList.add(
+                        "hidden"
+                    );
+
+                },
+                {
+                    once: true
+                }
+            );
+
+            image.addEventListener(
+                "error",
+                () => {
+
+                    shimmer.classList.add(
+                        "hidden"
+                    );
+
+                },
+                {
+                    once: true
+                }
+            );
+
+            card.appendChild(image);
+        }
+    } else {
+
+        shimmer.classList.add(
+            "hidden"
+        );
     }
 
 
@@ -983,136 +740,420 @@ function createEventCard(event) {
 
     content.innerHTML = `
 
-        <div class="event-content-title">
-            ${escapeHTML(event.title)}
-        </div>
+        <h3 class="event-name">
+            ${escapeHTML(event.name)}
+        </h3>
 
         ${
-            event.description
-                ? `
-                <div class="event-description">
-                    ${escapeHTML(
-                        event.description
-                    )}
+            event.id
+            ? `
+                <div class="event-id">
+                    ID • ${escapeHTML(event.id)}
                 </div>
-                `
-                : ""
+            `
+            : ""
         }
-
-        <div class="event-meta">
-
-            ${
-                event.date
-                    ? `
-                    <span class="meta-item">
-                        ${escapeHTML(
-                            event.date
-                        )}
-                    </span>
-                    `
-                    : ""
-            }
-
-            ${
-                event.time
-                    ? `
-                    <span class="meta-item">
-                        • ${escapeHTML(
-                            event.time
-                        )}
-                    </span>
-                    `
-                    : ""
-            }
-
-            ${
-                event.location
-                    ? `
-                    <span class="meta-item">
-                        • ${escapeHTML(
-                            event.location
-                        )}
-                    </span>
-                    `
-                    : ""
-            }
-
-        </div>
 
     `;
 
-
-    /* ACTION */
-
-    if (
-        event.action &&
-        isObject(event.action) &&
-        event.action.url
-    ) {
-
-        const link =
-            document.createElement("a");
-
-        link.className =
-            "event-action";
-
-        link.href =
-            safeString(
-                event.action.url
-            );
-
-        link.textContent =
-            safeString(
-                event.action.label,
-                "View Event"
-            );
-
-        link.target = "_blank";
-
-        link.rel =
-            "noopener noreferrer";
-
-        content.appendChild(link);
-    }
-
-
     card.appendChild(content);
+
 
     return card;
 }
 
 
 /* =========================================================
-   FIND EVENTS FROM ANY JSON STRUCTURE
+   DOTS
 ========================================================= */
 
-function extractEvents(data) {
+function createDots(count) {
 
-    if (Array.isArray(data))
-        return data;
+    sequenceDots.innerHTML = "";
 
-    if (!isObject(data))
-        return [];
+    for (
+        let i = 0;
+        i < count;
+        i++
+    ) {
 
-    const directKeys = [
-        "events",
-        "data",
-        "results",
-        "items",
-        "records"
-    ];
+        const dot =
+            document.createElement("span");
 
-    for (const key of directKeys) {
+        dot.className =
+            "sequence-dot";
 
-        if (Array.isArray(data[key]))
-            return data[key];
+        if (i === 0) {
+            dot.classList.add(
+                "active"
+            );
+        }
+
+        sequenceDots.appendChild(dot);
+    }
+}
+
+
+/* =========================================================
+   ACTIVE DOT
+========================================================= */
+
+function updateActiveDot() {
+
+    const cards =
+        eventsContainer.querySelectorAll(
+            ".event-card"
+        );
+
+    const dots =
+        sequenceDots.querySelectorAll(
+            ".sequence-dot"
+        );
+
+    if (!cards.length)
+        return;
+
+
+    const center =
+        eventsContainer.scrollLeft +
+        eventsContainer.clientWidth / 2;
+
+
+    let closestIndex = 0;
+
+    let closestDistance =
+        Infinity;
+
+
+    cards.forEach(
+        (card, index) => {
+
+            const cardCenter =
+                card.offsetLeft +
+                card.offsetWidth / 2;
+
+            const distance =
+                Math.abs(
+                    center -
+                    cardCenter
+                );
+
+            if (
+                distance <
+                closestDistance
+            ) {
+
+                closestDistance =
+                    distance;
+
+                closestIndex =
+                    index;
+            }
+        }
+    );
+
+
+    dots.forEach(
+        (dot, index) => {
+
+            dot.classList.toggle(
+                "active",
+                index ===
+                closestIndex
+            );
+        }
+    );
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderEvents(data) {
+
+    const rawEvents =
+        extractEvents(data);
+
+
+    const events =
+        rawEvents
+            .map(normalizeEvent)
+            .filter(Boolean);
+
+
+    eventsContainer.innerHTML = "";
+
+
+    if (!events.length) {
+
+        eventsContainer.innerHTML = `
+            <div class="events-state">
+                No events
+            </div>
+        `;
+
+        sequenceDots.innerHTML = "";
+
+        return;
     }
 
 
-    const found = [];
+    createDots(
+        events.length
+    );
 
-    function walk(value) {
 
-        if (Array.isArray(value)) {
+    const fragment =
+        document.createDocumentFragment();
 
-            for (const item of value
+
+    events.forEach(
+        event => {
+
+            fragment.appendChild(
+                createEventCard(event)
+            );
+        }
+    );
+
+
+    eventsContainer.appendChild(
+        fragment
+    );
+
+
+    updateActiveDot();
+}
+
+
+/* =========================================================
+   FETCH
+========================================================= */
+
+async function fetchEvents() {
+
+    const response =
+        await fetch(
+            EVENTS_API,
+            {
+                method: "GET",
+
+                cache: "no-store",
+
+                credentials: "omit",
+
+                headers: {
+                    "Accept":
+                        "application/json"
+                }
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "HTTP " +
+            response.status
+        );
+    }
+
+
+    return await response.json();
+}
+
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+async function loadEvents() {
+
+    createSkeleton();
+
+    try {
+
+        const data =
+            await fetchEvents();
+
+        renderEvents(data);
+
+    } catch (error) {
+
+        console.error(
+            "Events API error:",
+            error
+        );
+
+        eventsContainer.innerHTML = `
+            <div class="events-state">
+                Events unavailable
+            </div>
+        `;
+
+        sequenceDots.innerHTML = "";
+    }
+}
+
+
+/* =========================================================
+   SCROLL → DOT SEQUENCE
+========================================================= */
+
+let scrollTimer;
+
+eventsContainer.addEventListener(
+    "scroll",
+    () => {
+
+        updateActiveDot();
+
+        clearTimeout(
+            scrollTimer
+        );
+
+        scrollTimer =
+            setTimeout(
+                updateActiveDot,
+                80
+            );
+
+    },
+    {
+        passive: true
+    }
+);
+
+
+/* =========================================================
+   AUTO SCROLL
+========================================================= */
+
+let autoScrollTimer;
+
+function startAutoScroll() {
+
+    stopAutoScroll();
+
+    autoScrollTimer =
+        setInterval(
+            () => {
+
+                const cards =
+                    eventsContainer.querySelectorAll(
+                        ".event-card"
+                    );
+
+                if (
+                    cards.length <= 1
+                ) {
+                    return;
+                }
+
+
+                const current =
+                    Math.round(
+                        eventsContainer.scrollLeft /
+                        eventsContainer.clientWidth
+                    );
+
+
+                const next =
+                    (current + 1) %
+                    cards.length;
+
+
+                eventsContainer.scrollTo({
+
+                    left:
+                        cards[next].offsetLeft,
+
+                    behavior:
+                        "smooth"
+                });
+
+            },
+            4000
+        );
+}
+
+
+function stopAutoScroll() {
+
+    if (autoScrollTimer) {
+
+        clearInterval(
+            autoScrollTimer
+        );
+
+        autoScrollTimer =
+            null;
+    }
+}
+
+
+/* =========================================================
+   TOUCH / INTERACTION
+========================================================= */
+
+eventsContainer.addEventListener(
+    "pointerdown",
+    stopAutoScroll,
+    {
+        passive: true
+    }
+);
+
+eventsContainer.addEventListener(
+    "pointerup",
+    startAutoScroll,
+    {
+        passive: true
+    }
+);
+
+eventsContainer.addEventListener(
+    "pointercancel",
+    startAutoScroll,
+    {
+        passive: true
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadEvents()
+    .then(() => {
+        startAutoScroll();
+    });
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+
+            loadEvents()
+                .then(() => {
+                    startAutoScroll();
+                });
+        }
+    }
+);
+
+</script>
+
+</body>
+    </html>
