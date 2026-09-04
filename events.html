@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -8,7 +7,6 @@
 <title>Events</title>
 
 <style>
-
 *{
   box-sizing:border-box;
 }
@@ -21,65 +19,133 @@ body{
 }
 
 .wrap{
-  max-width:650px;
+  width:100%;
+  max-width:700px;
   margin:auto;
   padding:18px;
+}
+
+h1{
+  margin:0 0 18px;
 }
 
 .events{
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:18px;
 }
+
+/* EVENT CARD */
 
 .event-card{
   overflow:hidden;
   border:1px solid #e5e5e5;
   border-radius:22px;
   background:#fff;
+  box-shadow:0 3px 15px rgba(0,0,0,.06);
 }
 
-.event-image{
+/* MEDIA */
+
+.event-media{
+  position:relative;
   width:100%;
+  height:360px;
+  overflow:hidden;
+  background:#eee;
+}
+
+.event-media img,
+.event-media video{
+  width:100%;
+  height:100%;
   display:block;
-  max-height:400px;
   object-fit:cover;
 }
+
+/* TEXT ON IMAGE */
+
+.event-overlay{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:24px 20px;
+  color:#fff;
+  background:linear-gradient(
+    transparent,
+    rgba(0,0,0,.78)
+  );
+}
+
+.overlay-title{
+  margin:0 0 5px;
+  font-size:24px;
+  font-weight:700;
+}
+
+.overlay-subtitle{
+  margin:0;
+  font-size:15px;
+}
+
+/* CONTENT */
 
 .event-content{
   padding:20px;
 }
 
-.event-title{
-  margin:0 0 8px;
-  font-size:22px;
-}
-
-.event-subtitle{
-  margin:0 0 8px;
-}
-
 .event-description{
   line-height:1.6;
+  margin:0 0 10px;
+}
+
+.event-audience{
+  display:block;
+  margin-top:8px;
+  opacity:.7;
 }
 
 .event-button{
   display:inline-block;
-  margin-top:12px;
-  padding:10px 16px;
+  margin-top:14px;
+  padding:11px 17px;
   border-radius:12px;
   background:#171717;
   color:#fff;
   text-decoration:none;
 }
 
-.loading,
-.error,
-.empty{
+/* LOADING */
+
+.loading-card{
+  height:360px;
+  border-radius:22px;
+  background:
+    linear-gradient(
+      90deg,
+      #eeeeee 25%,
+      #f8f8f8 50%,
+      #eeeeee 75%
+    );
+  background-size:400% 100%;
+  animation:shimmer 1.4s infinite;
+}
+
+@keyframes shimmer{
+  0%{
+    background-position:100% 0;
+  }
+
+  100%{
+    background-position:-100% 0;
+  }
+}
+
+.message{
   padding:30px;
   text-align:center;
 }
-
 </style>
 </head>
 
@@ -90,9 +156,10 @@ body{
   <h1>Events</h1>
 
   <div id="events" class="events">
-    <div class="loading">
-      Loading events…
-    </div>
+
+    <div class="loading-card"></div>
+    <div class="loading-card"></div>
+
   </div>
 
 </div>
@@ -100,47 +167,44 @@ body{
 
 <script>
 
+/* =========================================
+   JSON API
+========================================= */
+
 const EVENTS_URL =
 "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnQpkzFtzwii6gyOjk8Qb1gAvsBNDrQL8a9hS93qwKUhA-_zsNd9oHIgaQnH8dUQfxzwbAFzyXGlm3nN6kVrYfOEGylxRDH4OfMD7B2miI62IJdRwaP4gQwhUU46yZlcOuOPJggdeWnMf8IWbnryBt0D7PsxDKI58ew9utNuJ07udTJFWDMawPlljRQB7yr-AKQazslYm1klpqFUSYFZNqO_3MrSwyKwfOGfrdRjyIc-nNCUx5drVB21mRZkYTLjb35rOy_rGkOz7YPEpKwzxkoZR2ZA5g&lib=MduMBJXEHABZJ-ipAA0Phpy_ugQBqqrJo";
 
 
-const container = document.getElementById("events");
+const container =
+document.getElementById("events");
 
 
-/* =========================
-   LOAD EVENTS
-========================= */
+/* =========================================
+   LOAD JSON
+========================================= */
 
 async function loadEvents(){
 
   try{
 
-    const response = await fetch(EVENTS_URL);
+    const response =
+      await fetch(EVENTS_URL, {
+        cache:"no-store"
+      });
 
     if(!response.ok){
-      throw new Error("HTTP " + response.status);
+      throw new Error(
+        "HTTP " + response.status
+      );
     }
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
-    console.log("API:", data);
-
-    /*
-      Supports:
-
-      {
-        "events":[...]
-      }
-
-      OR
-
-      [...]
-    */
+    console.log("EVENT JSON:", data);
 
     const events =
-      Array.isArray(data)
-      ? data
-      : (data.events || []);
+      normalizeEvents(data);
 
     renderEvents(events);
 
@@ -148,10 +212,13 @@ async function loadEvents(){
 
   catch(error){
 
-    console.error(error);
+    console.error(
+      "Event loading error:",
+      error
+    );
 
     container.innerHTML = `
-      <div class="error">
+      <div class="message">
         Unable to load events.
       </div>
     `;
@@ -161,16 +228,50 @@ async function loadEvents(){
 }
 
 
-/* =========================
+/* =========================================
+   SUPPORT MANY JSON STRUCTURES
+========================================= */
+
+function normalizeEvents(data){
+
+  if(Array.isArray(data)){
+    return data;
+  }
+
+  if(Array.isArray(data.events)){
+    return data.events;
+  }
+
+  if(Array.isArray(data.data)){
+    return data.data;
+  }
+
+  if(Array.isArray(data.items)){
+    return data.items;
+  }
+
+  return [];
+
+}
+
+
+/* =========================================
    RENDER EVENTS
-========================= */
+========================================= */
 
 function renderEvents(events){
 
-  if(!events.length){
+  container.innerHTML = "";
+
+  const enabledEvents =
+    events.filter(event =>
+      event.enabled !== false
+    );
+
+  if(!enabledEvents.length){
 
     container.innerHTML = `
-      <div class="empty">
+      <div class="message">
         No events available.
       </div>
     `;
@@ -179,52 +280,73 @@ function renderEvents(events){
   }
 
 
-  container.innerHTML = "";
+  enabledEvents.forEach(event => {
 
+    const card =
+      document.createElement("article");
 
-  events.forEach(event => {
-
-    if(event.enabled === false){
-      return;
-    }
-
-
-    /*
-      Main structure:
-
-      id
-      eventName
-      contentScript
-    */
-
-    const id = event.id || "";
-
-    const eventName =
-      event.eventName || "Event";
-
-
-    let content = event.contentScript;
+    card.className =
+      "event-card";
 
 
     /*
-      If contentScript is stored
-      as JSON text in Google Sheets,
-      convert it into an object.
+      Support both:
+
+      media.url
+
+      AND old:
+
+      contentScript.imageUrl
     */
 
-    if(typeof content === "string"){
+    let media =
+      event.media || {};
 
-      try{
+    let content =
+      event.content || {};
 
-        content = JSON.parse(content);
+
+    /* OLD JSON SUPPORT */
+
+    if(!Object.keys(media).length){
+
+      if(event.contentScript){
+
+        try{
+
+          content =
+            typeof event.contentScript === "string"
+            ? JSON.parse(event.contentScript)
+            : event.contentScript;
+
+        }catch(e){
+
+          console.warn(
+            "Invalid contentScript JSON"
+          );
+
+        }
 
       }
 
-      catch(error){
+      if(
+        content.imageUrl
+      ){
 
-        content = {
-          type:"editorial",
-          title:content
+        media = {
+          type:"image",
+          url:content.imageUrl
+        };
+
+      }
+
+      else if(
+        content.videoUrl
+      ){
+
+        media = {
+          type:"video",
+          url:content.videoUrl
         };
 
       }
@@ -232,74 +354,219 @@ function renderEvents(events){
     }
 
 
-    content = content || {};
+    /* =====================================
+       MEDIA
+    ===================================== */
+
+    if(media.url){
+
+      const mediaBox =
+        document.createElement("div");
+
+      mediaBox.className =
+        "event-media";
 
 
-    const card =
-      document.createElement("div");
+      let mediaType =
+        String(media.type || "")
+        .toLowerCase();
 
-    card.className = "event-card";
+
+      /*
+        Automatic detection
+      */
+
+      if(!mediaType){
+
+        const url =
+          media.url.toLowerCase();
+
+        if(
+          url.includes(".mp4") ||
+          url.includes(".webm") ||
+          url.includes(".ogg") ||
+          url.includes(".mov") ||
+          url.includes(".m4v")
+        ){
+
+          mediaType = "video";
+
+        }else{
+
+          mediaType = "image";
+
+        }
+
+      }
 
 
-    /* =========================
-       IMAGE
-    ========================= */
+      /* IMAGE */
 
-    if(
-      content.type === "image" &&
-      content.imageUrl
-    ){
+      if(mediaType === "image"){
 
-      const img =
-        document.createElement("img");
+        const img =
+          document.createElement("img");
 
-      img.className = "event-image";
+        img.src =
+          media.url;
 
-      img.src = content.imageUrl;
+        img.alt =
+          event.eventName ||
+          content.title ||
+          "Event";
 
-      img.alt =
-        content.title || eventName;
+        img.loading =
+          "lazy";
 
-      card.appendChild(img);
+        img.onerror = () => {
+
+          mediaBox.innerHTML = `
+            <div class="message">
+              Image unavailable
+            </div>
+          `;
+
+        };
+
+        mediaBox.appendChild(img);
+
+      }
+
+
+      /* VIDEO */
+
+      else if(mediaType === "video"){
+
+        const video =
+          document.createElement("video");
+
+        video.src =
+          media.url;
+
+        video.controls =
+          media.controls !== false;
+
+        video.autoplay =
+          media.autoplay === true;
+
+        video.muted =
+          media.muted === true ||
+          media.autoplay === true;
+
+        video.loop =
+          media.loop === true;
+
+        video.playsInline =
+          true;
+
+        if(media.poster){
+
+          video.poster =
+            media.poster;
+
+        }
+
+        video.onerror = () => {
+
+          mediaBox.innerHTML = `
+            <div class="message">
+              Video unavailable
+            </div>
+          `;
+
+        };
+
+        mediaBox.appendChild(video);
+
+      }
+
+
+      /* =====================================
+         TEXT OVER IMAGE
+      ===================================== */
+
+      const overlay =
+        event.overlay || {};
+
+
+      if(
+        overlay.enabled !== false &&
+        (
+          overlay.title ||
+          overlay.subtitle
+        )
+      ){
+
+        const overlayBox =
+          document.createElement("div");
+
+        overlayBox.className =
+          "event-overlay";
+
+
+        if(overlay.title){
+
+          const title =
+            document.createElement("h2");
+
+          title.className =
+            "overlay-title";
+
+          title.textContent =
+            overlay.title;
+
+          if(overlay.textColor){
+
+            title.style.color =
+              overlay.textColor;
+
+          }
+
+          overlayBox.appendChild(title);
+
+        }
+
+
+        if(overlay.subtitle){
+
+          const subtitle =
+            document.createElement("p");
+
+          subtitle.className =
+            "overlay-subtitle";
+
+          subtitle.textContent =
+            overlay.subtitle;
+
+          if(overlay.textColor){
+
+            subtitle.style.color =
+              overlay.textColor;
+
+          }
+
+          overlayBox.appendChild(subtitle);
+
+        }
+
+
+        mediaBox.appendChild(
+          overlayBox
+        );
+
+      }
+
+
+      card.appendChild(
+        mediaBox
+      );
 
     }
 
 
-    /* =========================
-       VIDEO
-    ========================= */
-
-    if(
-      content.type === "video" &&
-      content.videoUrl
-    ){
-
-      const video =
-        document.createElement("video");
-
-      video.className = "event-image";
-
-      video.src = content.videoUrl;
-
-      video.controls =
-        content.controls !== false;
-
-      video.autoplay =
-        content.autoplay === true;
-
-      video.loop =
-        content.loop === true;
-
-      video.playsInline = true;
-
-      card.appendChild(video);
-
-    }
-
-
-    /* =========================
+    /* =====================================
        CONTENT
-    ========================= */
+    ===================================== */
 
     const contentBox =
       document.createElement("div");
@@ -308,48 +575,31 @@ function renderEvents(events){
       "event-content";
 
 
-    const style =
-      content.style || {};
+    const title =
+      content.title ||
+      event.eventName;
 
 
-    if(content.title){
+    /*
+      Don't duplicate overlay title
+      in normal content.
+    */
 
-      const title =
+    if(
+      title &&
+      !(
+        event.overlay &&
+        event.overlay.title === title
+      )
+    ){
+
+      const h2 =
         document.createElement("h2");
 
-      title.className =
-        "event-title";
+      h2.textContent =
+        title;
 
-      title.textContent =
-        content.title;
-
-      if(style.fontStyle === "italic"){
-        title.style.fontStyle =
-          "italic";
-      }
-
-      if(style.color){
-        title.style.color =
-          style.color;
-      }
-
-      contentBox.appendChild(title);
-
-    }
-
-
-    if(content.subtitle){
-
-      const subtitle =
-        document.createElement("p");
-
-      subtitle.className =
-        "event-subtitle";
-
-      subtitle.textContent =
-        content.subtitle;
-
-      contentBox.appendChild(subtitle);
+      contentBox.appendChild(h2);
 
     }
 
@@ -365,31 +615,34 @@ function renderEvents(events){
       description.textContent =
         content.description;
 
-      contentBox.appendChild(description);
+      contentBox.appendChild(
+        description
+      );
 
     }
 
-
-    /* =========================
-       AUDIENCE
-    ========================= */
 
     if(content.audience){
 
       const audience =
         document.createElement("small");
 
+      audience.className =
+        "event-audience";
+
       audience.textContent =
         content.audience;
 
-      contentBox.appendChild(audience);
+      contentBox.appendChild(
+        audience
+      );
 
     }
 
 
-    /* =========================
-       ACTION BUTTON
-    ========================= */
+    /* =====================================
+       BUTTON
+    ===================================== */
 
     if(
       content.action &&
@@ -409,45 +662,42 @@ function renderEvents(events){
         "_blank";
 
       button.rel =
-        "noopener";
+        "noopener noreferrer";
 
       button.textContent =
         content.action.label ||
         "Explore";
 
-      contentBox.appendChild(button);
+      contentBox.appendChild(
+        button
+      );
 
     }
 
 
-    card.appendChild(contentBox);
+    if(contentBox.children.length){
+
+      card.appendChild(
+        contentBox
+      );
+
+    }
+
 
     container.appendChild(card);
-
-
-    /*
-      Useful for debugging
-    */
-
-    console.log(
-      "Event:",
-      id,
-      eventName,
-      content
-    );
 
   });
 
 }
 
 
-/* =========================
+/* =========================================
    START
-========================= */
+========================================= */
 
 loadEvents();
 
 </script>
 
 </body>
-</html>
+  </html>
