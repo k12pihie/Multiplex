@@ -2,19 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport"
       content="width=device-width,initial-scale=1,viewport-fit=cover">
 
 <title>Events</title>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
 }
 
-html,body{
+html,
+body{
     width:100%;
     min-height:100%;
     background:#fff;
@@ -33,6 +36,11 @@ body{
     -webkit-font-smoothing:antialiased;
 }
 
+
+/* =========================================================
+   EVENTS SECTION
+========================================================= */
+
 .events-section{
     width:100%;
     max-width:900px;
@@ -40,7 +48,10 @@ body{
     padding:16px 12px 30px;
 }
 
-/* HEADER */
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .events-header{
     display:flex;
@@ -67,6 +78,7 @@ body{
     height:5px;
     border-radius:50%;
     background:#c7c7c7;
+
     transition:
         transform .25s ease,
         background .25s ease,
@@ -78,41 +90,63 @@ body{
     transform:scale(1.35);
 }
 
-/* EVENT CONTAINER */
+
+/* =========================================================
+   EVENTS CONTAINER
+========================================================= */
 
 .events-container{
     width:100%;
+
     display:flex;
     flex-direction:column;
+
     gap:16px;
 }
 
-/* EVENT */
+
+/* =========================================================
+   EVENT CARD
+========================================================= */
 
 .event-card{
     position:relative;
+
     width:100%;
+
     aspect-ratio:4 / 5;
+
     overflow:hidden;
+
     border-radius:24px;
+
     background:#f1f1f1;
+
     contain:layout paint style;
+
     transform:translateZ(0);
     -webkit-transform:translateZ(0);
 }
 
-/* MEDIA */
+
+/* =========================================================
+   MEDIA
+========================================================= */
 
 .event-media{
     position:absolute;
+
     inset:0;
+
     overflow:hidden;
+
     background:#ededed;
 }
 
 .event-media img,
 .event-media video{
     position:absolute;
+
     inset:0;
 
     width:100%;
@@ -134,11 +168,16 @@ body{
     opacity:1;
 }
 
-/* SHIMMER */
+
+/* =========================================================
+   SKELETON SHIMMER
+========================================================= */
 
 .skeleton{
     position:absolute;
+
     inset:0;
+
     z-index:3;
 
     background:
@@ -158,13 +197,16 @@ body{
 .skeleton.done{
     opacity:0;
     visibility:hidden;
+
     pointer-events:none;
+
     transition:
         opacity .2s ease,
         visibility .2s ease;
 }
 
 @keyframes skeletonShimmer{
+
     from{
         background-position:200% 0;
     }
@@ -174,10 +216,14 @@ body{
     }
 }
 
-/* FALLBACK */
+
+/* =========================================================
+   MEDIA FALLBACK
+========================================================= */
 
 .media-fallback{
     position:absolute;
+
     inset:0;
 
     display:flex;
@@ -185,13 +231,20 @@ body{
     justify-content:center;
 
     color:#999;
+
     font-size:13px;
+
+    background:#ededed;
 }
 
-/* CONTENT */
+
+/* =========================================================
+   EVENT CONTENT
+========================================================= */
 
 .event-content{
     position:absolute;
+
     left:0;
     right:0;
     bottom:0;
@@ -213,13 +266,19 @@ body{
 
 .event-name{
     font-size:22px;
+
     line-height:1.15;
+
     font-weight:800;
+
     letter-spacing:-.35px;
 
     display:-webkit-box;
+
     -webkit-line-clamp:2;
+
     -webkit-box-orient:vertical;
+
     overflow:hidden;
 }
 
@@ -227,31 +286,42 @@ body{
     margin-top:7px;
 
     font-size:13px;
+
     line-height:1.4;
 
     opacity:.9;
 
     display:-webkit-box;
+
     -webkit-line-clamp:2;
+
     -webkit-box-orient:vertical;
+
     overflow:hidden;
 }
 
 .event-meta{
     display:flex;
+
     flex-wrap:wrap;
+
     gap:6px;
 
     margin-top:9px;
 
     font-size:11px;
+
     opacity:.86;
 }
 
-/* BADGE */
+
+/* =========================================================
+   BADGE
+========================================================= */
 
 .event-badge{
     position:absolute;
+
     top:13px;
     left:13px;
 
@@ -262,49 +332,73 @@ body{
     border-radius:999px;
 
     background:rgba(0,0,0,.58);
+
     color:#fff;
 
     font-size:11px;
+
     font-weight:700;
 
     backdrop-filter:blur(10px);
+
     -webkit-backdrop-filter:blur(10px);
 }
 
-/* ACTION */
+
+/* =========================================================
+   ACTION BUTTON
+========================================================= */
 
 .event-action{
     display:inline-flex;
+
     align-items:center;
     justify-content:center;
 
     margin-top:12px;
 
     min-height:38px;
+
     padding:0 15px;
 
     border-radius:12px;
 
     background:#fff;
+
     color:#111;
 
     text-decoration:none;
 
     font-size:12px;
+
     font-weight:750;
 }
 
-/* ERROR / EMPTY */
+.event-action:active{
+    transform:scale(.97);
+}
+
+
+/* =========================================================
+   EMPTY / ERROR STATE
+========================================================= */
 
 .events-state{
     width:100%;
+
     padding:45px 15px;
+
     text-align:center;
+
     color:#888;
+
     font-size:13px;
 }
 
-/* MOBILE */
+
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media(max-width:600px){
 
@@ -324,7 +418,10 @@ body{
     }
 }
 
-/* REDUCED MOTION */
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
 @media(prefers-reduced-motion:reduce){
 
@@ -338,10 +435,13 @@ body{
         transition:none;
     }
 }
+
 </style>
 </head>
 
+
 <body>
+
 
 <section class="events-section">
 
@@ -359,12 +459,14 @@ body{
 
     </header>
 
+
     <div
         id="eventsContainer"
         class="events-container">
     </div>
 
 </section>
+
 
 
 <script>
@@ -446,7 +548,7 @@ function escapeHTML(value){
 
 
 /* =========================================================
-   FIND VALUE FROM COMPLEX JSON
+   FIND VALUE
 ========================================================= */
 
 function findValue(
@@ -477,10 +579,9 @@ function findValue(
                 object[key];
 
             if(
-                typeof value ===
-                "string" ||
-                typeof value ===
-                "number"
+                typeof value === "string" ||
+                typeof value === "number" ||
+                typeof value === "boolean"
             ){
 
                 return text(value);
@@ -494,7 +595,7 @@ function findValue(
 
 
 /* =========================================================
-   FIND URL DEEPLY
+   DEEP MEDIA URL FINDER
 ========================================================= */
 
 function findMediaURL(
@@ -502,7 +603,7 @@ function findMediaURL(
     depth = 0
 ){
 
-    if(depth > 7)
+    if(depth > 8)
         return "";
 
 
@@ -522,8 +623,10 @@ function findMediaURL(
     }
 
 
-    if(!isObject(value) &&
-       !Array.isArray(value)){
+    if(
+        !isObject(value) &&
+        !Array.isArray(value)
+    ){
 
         return "";
     }
@@ -539,13 +642,15 @@ function findMediaURL(
         "video",
         "videoUrl",
         "videoURL",
+        "media",
         "mediaUrl",
         "mediaURL",
         "thumbnail",
         "poster",
         "photo",
         "file",
-        "link"
+        "link",
+        "href"
 
     ];
 
@@ -613,22 +718,33 @@ function mediaType(
             [
                 "mediaType",
                 "mime",
-                "type",
                 "format"
             ]
         ).toLowerCase();
 
 
-    if(type.includes("video"))
+    if(
+        type.includes("video")
+    ){
+
         return "video";
-
-
-    const source =
-        url.toLowerCase();
+    }
 
 
     if(
-        /\.(mp4|webm|m4v|mov)(\?|#|$)/i
+        type.includes("image")
+    ){
+
+        return "image";
+    }
+
+
+    const source =
+        text(url).toLowerCase();
+
+
+    if(
+        /\.(mp4|webm|m4v|mov|ogv)(\?|#|$)/i
             .test(source)
     ){
 
@@ -718,8 +834,6 @@ function extractEvents(
         return [];
 
 
-    /* common containers */
-
     const containers = [
 
         "events",
@@ -789,6 +903,7 @@ function extractEvents(
                 const fingerprint =
                     JSON.stringify(value);
 
+
                 if(
                     !seen.has(
                         fingerprint
@@ -832,7 +947,7 @@ function extractEvents(
 
 
 /* =========================================================
-   NORMALIZE
+   NORMALIZE EVENT
 ========================================================= */
 
 function normalizeEvent(
@@ -964,12 +1079,8 @@ function normalizeEvent(
 
 
     const mediaURL =
-        findMediaURL(
-            media
-        ) ||
-        findMediaURL(
-            raw
-        );
+        findMediaURL(media) ||
+        findMediaURL(raw);
 
 
     const type =
@@ -985,14 +1096,15 @@ function normalizeEvent(
             [
                 "actionUrl",
                 "actionURL",
-                "link",
                 "href"
             ]
         );
 
 
-    if(!actionURL &&
-       isObject(raw.action)){
+    if(
+        !actionURL &&
+        isObject(raw.action)
+    ){
 
         actionURL =
             findValue(
@@ -1020,6 +1132,30 @@ function normalizeEvent(
                 : ""
         ) ||
         "View Event";
+
+
+    let enabled = true;
+
+
+    const enabledValue =
+        findValue(
+            raw,
+            [
+                "enabled",
+                "active",
+                "visible"
+            ]
+        ).toLowerCase();
+
+
+    if(
+        enabledValue === "false" ||
+        enabledValue === "0" ||
+        enabledValue === "no"
+    ){
+
+        enabled = false;
+    }
 
 
     return {
@@ -1055,6 +1191,8 @@ function normalizeEvent(
 
         actionLabel,
 
+        enabled,
+
         raw
     };
 }
@@ -1070,6 +1208,7 @@ function createSkeleton(){
         document.createElement(
             "article"
         );
+
 
     card.className =
         "event-card";
@@ -1117,7 +1256,7 @@ function showSkeletons(){
 
 
 /* =========================================================
-   IMAGE / VIDEO LOADING
+   MEDIA LOADING
 ========================================================= */
 
 function attachMedia(
@@ -1137,129 +1276,69 @@ function attachMedia(
             "done"
         );
 
+
         wrapper.insertAdjacentHTML(
             "beforeend",
-            `<div class="media-fallback">
+            `
+            <div class="media-fallback">
                 No media
-            </div>`
+            </div>
+            `
         );
+
 
         return;
     }
 
 
     const url =
-        event.mediaURL;
+    event.mediaURL;
 
 
-    if(
-        event.mediaType ===
-        "video"
-    ){
+/* =====================================================
+   VIDEO
+===================================================== */
 
-        const video =
-            document.createElement(
-                "video"
-            );
+if(
+    event.mediaType ===
+    "video"
+){
 
-
-        video.src = url;
-
-        video.preload =
-            "metadata";
-
-        video.muted = true;
-
-        video.playsInline = true;
-
-        video.loop = true;
-
-        video.controls = false;
-
-        video.setAttribute(
-            "playsinline",
-            ""
-        );
-
-
-        video.addEventListener(
-            "loadeddata",
-            () => {
-
-                wrapper.classList.add(
-                    "ready"
-                );
-
-                skeleton?.classList.add(
-                    "done"
-                );
-
-            },
-            {
-                once:true
-            }
-        );
-
-
-        video.addEventListener(
-            "error",
-            () => {
-
-                skeleton?.classList.add(
-                    "done"
-                );
-
-                video.remove();
-
-                wrapper.insertAdjacentHTML(
-                    "beforeend",
-                    `<div class="media-fallback">
-                        Media unavailable
-                    </div>`
-                );
-
-            },
-            {
-                once:true
-            }
-        );
-
-
-        wrapper.appendChild(
-            video
-        );
-
-
-        return;
-    }
-
-
-    const image =
+    const video =
         document.createElement(
-            "img"
+            "video"
         );
 
+    video.src =
+        url;
 
-    image.alt =
-        event.title;
+    video.preload =
+        "metadata";
 
+    video.muted =
+        true;
 
-    image.loading =
-        "lazy";
+    video.playsInline =
+        true;
 
+    video.loop =
+        true;
 
-    image.decoding =
-        "async";
+    video.controls =
+        false;
 
-
-    image.setAttribute(
-        "fetchpriority",
-        "low"
+    video.setAttribute(
+        "playsinline",
+        ""
     );
 
+    video.setAttribute(
+        "muted",
+        ""
+    );
 
-    image.addEventListener(
-        "load",
+    video.addEventListener(
+        "loadeddata",
         () => {
 
             wrapper.classList.add(
@@ -1270,14 +1349,17 @@ function attachMedia(
                 "done"
             );
 
+            video.play().catch(
+                () => {}
+            );
+
         },
         {
             once:true
         }
     );
 
-
-    image.addEventListener(
+    video.addEventListener(
         "error",
         () => {
 
@@ -1285,386 +1367,790 @@ function attachMedia(
                 "done"
             );
 
-            image.remove();
+            video.remove();
 
             wrapper.insertAdjacentHTML(
                 "beforeend",
-                `<div class="media-fallback">
+                `
+                <div class="media-fallback">
                     Media unavailable
-                </div>`
+                </div>
+                `
             );
 
         },
-                {
-            once: true
+        {
+            once:true
         }
     );
+
+    wrapper.appendChild(
+        video
+    );
+
+    return;
 }
 
-function createCard(event, index) {
-    const card = document.createElement("article");
-    card.className = "event-card";
 
-    const mediaWrapper = document.createElement("div");
-    mediaWrapper.className = "event-media";
+/* =====================================================
+   IMAGE
+===================================================== */
 
-    const content = document.createElement("div");
-    content.className = "event-content";
+const image =
+    document.createElement(
+        "img"
+    );
 
-    const title = document.createElement("h3");
-    title.className = "event-title";
-    title.textContent = event.title || "Event";
+image.alt =
+    event.title ||
+    "Event";
 
-    content.appendChild(title);
+image.loading =
+    "lazy";
 
-    if (event.description) {
-        const description = document.createElement("p");
-        description.className = "event-description";
-        description.textContent = event.description;
-        content.appendChild(description);
-    }
+image.decoding =
+    "async";
 
-    const meta = document.createElement("div");
-    meta.className = "event-meta";
+image.setAttribute(
+    "fetchpriority",
+    "low"
+);
 
-    if (event.date) {
-        const date = document.createElement("span");
-        date.textContent = event.date;
-        meta.appendChild(date);
-    }
+image.addEventListener(
+    "load",
+    () => {
 
-    if (event.time) {
-        const time = document.createElement("span");
-        time.textContent = event.time;
-        meta.appendChild(time);
-    }
-
-    if (event.location) {
-        const location = document.createElement("span");
-        location.textContent = event.location;
-        meta.appendChild(location);
-    }
-
-    if (meta.children.length) {
-        content.appendChild(meta);
-    }
-
-    if (event.actionURL) {
-        const action = document.createElement("a");
-        action.className = "event-action";
-        action.href = event.actionURL;
-        action.target = "_blank";
-        action.rel = "noopener noreferrer";
-        action.textContent = event.actionLabel || "View Event";
-
-        content.appendChild(action);
-    }
-
-    if (event.mediaURL) {
-        attachMedia(
-            mediaWrapper,
-            event.mediaURL,
-            event.mediaType
+        wrapper.classList.add(
+            "ready"
         );
+
+        skeleton?.classList.add(
+            "done"
+        );
+
+    },
+    {
+        once:true
+    }
+);
+
+image.addEventListener(
+    "error",
+    () => {
+
+        skeleton?.classList.add(
+            "done"
+        );
+
+        image.remove();
+
+        wrapper.insertAdjacentHTML(
+            "beforeend",
+            `
+            <div class="media-fallback">
+                Media unavailable
+            </div>
+            `
+        );
+
+    },
+    {
+        once:true
+    }
+);
+
+image.src =
+    url;
+
+wrapper.appendChild(
+    image
+);
+      /* =====================================================
+   IMAGE
+===================================================== */
+
+const image =
+    document.createElement("img");
+
+image.alt =
+    event.title ||
+    "Event";
+
+image.loading =
+    "lazy";
+
+image.decoding =
+    "async";
+
+image.setAttribute(
+    "fetchpriority",
+    "low"
+);
+
+image.addEventListener(
+    "load",
+    () => {
+
+        wrapper.classList.add(
+            "ready"
+        );
+
+        skeleton?.classList.add(
+            "done"
+        );
+
+    },
+    {
+        once: true
+    }
+);
+
+image.addEventListener(
+    "error",
+    () => {
+
+        skeleton?.classList.add(
+            "done"
+        );
+
+        image.remove();
+
+        wrapper.insertAdjacentHTML(
+            "beforeend",
+            `
+            <div class="media-fallback">
+                Media unavailable
+            </div>
+            `
+        );
+
+    },
+    {
+        once: true
+    }
+);
+
+image.src =
+    url;
+
+wrapper.appendChild(
+    image
+);
+
+
+/* =====================================================
+   CREATE EVENT CARD
+===================================================== */
+
+function createCard(event){
+
+    const card =
+        document.createElement("article");
+
+    card.className =
+        "event-card";
+
+    card.dataset.id =
+        event.id;
+
+    const media =
+        document.createElement("div");
+
+    media.className =
+        "event-media";
+
+    const skeleton =
+        document.createElement("div");
+
+    skeleton.className =
+        "skeleton";
+
+    media.appendChild(
+        skeleton
+    );
+
+    attachMedia(
+        media,
+        event
+    );
+
+    /* =================================================
+       BADGE
+    ================================================= */
+
+    if(event.badge){
+
+        const badge =
+            document.createElement("span");
+
+        badge.className =
+            "event-badge";
+
+        badge.textContent =
+            event.badge;
+
+        media.appendChild(
+            badge
+        );
+
     }
 
-    if (event.badge) {
-        const badge = document.createElement("span");
-        badge.className = "event-badge";
-        badge.textContent = event.badge;
-        mediaWrapper.appendChild(badge);
+
+    /* =================================================
+       CONTENT
+    ================================================= */
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "event-content";
+
+
+    const title =
+        document.createElement("h2");
+
+    title.className =
+        "event-name";
+
+    title.textContent =
+        event.title;
+
+    content.appendChild(
+        title
+    );
+
+
+    if(event.description){
+
+        const description =
+            document.createElement("p");
+
+        description.className =
+            "event-description";
+
+        description.textContent =
+            event.description;
+
+        content.appendChild(
+            description
+        );
+
     }
 
-    card.appendChild(mediaWrapper);
-    card.appendChild(content);
+
+    /* =================================================
+       META
+    ================================================= */
+
+    const meta =
+        document.createElement("div");
+
+    meta.className =
+        "event-meta";
+
+
+    if(event.date){
+
+        const date =
+            document.createElement("span");
+
+        date.textContent =
+            "📅 " + event.date;
+
+        meta.appendChild(
+            date
+        );
+
+    }
+
+
+    if(event.time){
+
+        const time =
+            document.createElement("span");
+
+        time.textContent =
+            "⏰ " + event.time;
+
+        meta.appendChild(
+            time
+        );
+
+    }
+
+
+    if(event.location){
+
+        const location =
+            document.createElement("span");
+
+        location.textContent =
+            "📍 " + event.location;
+
+        meta.appendChild(
+            location
+        );
+
+    }
+
+
+    if(meta.children.length){
+
+        content.appendChild(
+            meta
+        );
+
+    }
+
+
+    /* =================================================
+       ACTION
+    ================================================= */
+
+    if(event.actionURL){
+
+        const action =
+            document.createElement("a");
+
+        action.className =
+            "event-action";
+
+        action.href =
+            event.actionURL;
+
+        action.textContent =
+            event.actionLabel ||
+            "View Event";
+
+        action.target =
+            "_blank";
+
+        action.rel =
+            "noopener noreferrer";
+
+        content.appendChild(
+            action
+        );
+
+    }
+
+
+    card.appendChild(
+        media
+    );
+
+    card.appendChild(
+        content
+    );
 
     return card;
 }
 
-function createDots(count) {
-    sequenceDots.innerHTML = "";
 
-    for (let i = 0; i < count; i++) {
-        const dot = document.createElement("span");
+/* =====================================================
+   CREATE SEQUENCE DOTS
+===================================================== */
+
+function createDots(count){
+
+    dots.innerHTML = "";
+
+    const visibleCount =
+        Math.min(
+            count,
+            MAX_DOTS
+        );
+
+    for(
+        let i = 0;
+        i < visibleCount;
+        i++
+    ){
+
+        const dot =
+            document.createElement("span");
 
         dot.className =
-            "sequence-dot" + (i === 0 ? " active" : "");
+            "sequence-dot";
 
-        sequenceDots.appendChild(dot);
-    }
-}
+        if(i === 0){
 
-function updateDots(index) {
-    const dots =
-        sequenceDots.querySelectorAll(".sequence-dot");
+            dot.classList.add(
+                "active"
+            );
 
-    dots.forEach((dot, i) => {
-        dot.classList.toggle(
-            "active",
-            i === index
+        }
+
+        dots.appendChild(
+            dot
         );
-    });
+
+    }
+
 }
 
-const CACHE_KEY = "nova_events_fast_v3";
-const CACHE_TIME = 5 * 60 * 1000;
 
-function saveCache(data) {
-    try {
+/* =====================================================
+   UPDATE SEQUENCE DOTS
+===================================================== */
+
+function updateDots(index){
+
+    const allDots =
+        dots.querySelectorAll(
+            ".sequence-dot"
+        );
+
+    allDots.forEach(
+        (dot, i) => {
+
+            dot.classList.toggle(
+                "active",
+                i ===
+                index %
+                allDots.length
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   CACHE
+===================================================== */
+
+function saveCache(events){
+
+    try{
+
         localStorage.setItem(
             CACHE_KEY,
             JSON.stringify({
                 time: Date.now(),
-                data
+                data: events
             })
         );
-    } catch (e) {}
-}
 
-function getCache() {
-    try {
-        const cached =
-            JSON.parse(
-                localStorage.getItem(CACHE_KEY)
-            );
-
-        if (!cached) return null;
-
-        if (
-            Date.now() - cached.time >
-            CACHE_TIME
-        ) {
-            return null;
-        }
-
-        return cached.data;
-
-    } catch (e) {
-        return null;
     }
-      }
-      }
+    catch(error){
 
-async function fetchEvents() {
-    const controller = new AbortController();
-
-    const timeout = setTimeout(
-        () => controller.abort(),
-        10000
-    );
-
-    try {
-        const response = await fetch(
-            EVENTS_API,
-            {
-                method: "GET",
-                mode: "cors",
-                credentials: "omit",
-                cache: "no-store",
-                headers: {
-                    "Accept": "application/json"
-                },
-                signal: controller.signal
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(
-                `HTTP ${response.status}`
-            );
-        }
-
-        const data = await response.json();
-
-        saveCache(data);
-
-        return data;
-
-    } finally {
-        clearTimeout(timeout);
-    }
-}
-
-function render(events) {
-    eventsContainer.innerHTML = "";
-
-    if (!events || !events.length) {
-        createDots(0);
-        return;
-    }
-
-    createDots(events.length);
-
-    const fragment =
-        document.createDocumentFragment();
-
-    events.forEach((raw, index) => {
-        try {
-            const event =
-                normalizeEvent(raw);
-
-            if (!event.enabled) return;
-
-            const card =
-                createCard(event, index);
-
-            fragment.appendChild(card);
-
-        } catch (error) {
-            console.warn(
-                "Event skipped:",
-                error
-            );
-        }
-    });
-
-    eventsContainer.appendChild(fragment);
-}
-
-async function loadEvents() {
-    const cached = getCache();
-
-    if (cached) {
-        try {
-            const events =
-                extractEvents(cached);
-
-            render(events);
-        } catch (error) {
-            console.warn(
-                "Cache render failed:",
-                error
-            );
-        }
-    }
-
-    try {
-        const data =
-            await fetchEvents();
-
-        const events =
-            extractEvents(data);
-
-        render(events);
-
-    } catch (error) {
         console.warn(
-            "Event fetch failed:",
+            "Cache save failed:",
             error
         );
 
-        if (!cached) {
-            eventsContainer.innerHTML = "";
-        }
     }
+
 }
 
-function setupAutoScroll() {
-    let currentIndex = 0;
+
+function getCache(){
+
+    try{
+
+        const cached =
+            localStorage.getItem(
+                CACHE_KEY
+            );
+
+        if(!cached)
+            return null;
+
+        const parsed =
+            JSON.parse(
+                cached
+            );
+
+        if(
+            !parsed ||
+            !parsed.time ||
+            !Array.isArray(
+                parsed.data
+            )
+        ){
+
+            return null;
+
+        }
+
+        if(
+            Date.now() -
+            parsed.time >
+            CACHE_TIME
+        ){
+
+            return null;
+
+        }
+
+        return parsed.data;
+
+    }
+    catch(error){
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   FETCH EVENTS
+===================================================== */
+
+async function fetchEvents(){
+
+    const response =
+        await fetch(
+            EVENTS_API,
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
+
+    if(!response.ok){
+
+        throw new Error(
+            "HTTP " +
+            response.status
+        );
+
+    }
+
+    const data =
+        await response.json();
+
+    return extractEvents(
+        data
+    );
+
+}
+
+
+/* =====================================================
+   RENDER EVENTS
+===================================================== */
+
+function renderEvents(rawEvents){
+
+    const events =
+        rawEvents
+            .map(
+                normalizeEvent
+            )
+            .filter(
+                event =>
+                    event.enabled !== false
+            );
+
+    container.innerHTML = "";
+
+    if(!events.length){
+
+        container.innerHTML =
+            `
+            <div class="media-fallback">
+                No events available
+            </div>
+            `;
+
+        dots.innerHTML = "";
+
+        return;
+
+    }
+
+    events.forEach(
+        event => {
+
+            container.appendChild(
+                createCard(
+                    event
+                )
+            );
+
+        }
+    );
+
+    createDots(
+        events.length
+    );
+
+    currentIndex = 0;
+
+    updateDots(
+        currentIndex
+    );
+
+}
+
+
+/* =====================================================
+   LOAD EVENTS
+===================================================== */
+
+async function loadEvents(){
+
+    const cached =
+        getCache();
+
+    if(cached){
+
+        renderEvents(
+            cached
+        );
+
+    }
+
+    try{
+
+        const fresh =
+            await fetchEvents();
+
+        if(
+            Array.isArray(
+                fresh
+            )
+        ){
+
+            saveCache(
+                fresh
+            );
+
+            renderEvents(
+                fresh
+            );
+
+        }
+
+    }
+    catch(error){
+
+        console.warn(
+            "Events API failed:",
+            error
+        );
+
+        if(!cached){
+
+            container.innerHTML =
+                `
+                <div class="media-fallback">
+                    Unable to load events
+                </div>
+                `;
+
+        }
+
+    }
+
+      }
+      /* =====================================================
+   AUTO SCROLL
+===================================================== */
+
+let currentIndex = 0;
+
+function setupAutoScroll(){
 
     setInterval(() => {
+
         const cards =
-            eventsContainer.querySelectorAll(
+            container.querySelectorAll(
                 ".event-card"
             );
 
-        if (!cards.length) return;
+        if(!cards.length)
+            return;
 
-        currentIndex =let touchStartX = 0;
-let touchStartY = 0;
+        currentIndex =
+            (currentIndex + 1) %
+            cards.length;
 
-eventsContainer.addEventListener(
+        cards[currentIndex].scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        updateDots(
+            currentIndex
+        );
+
+    }, AUTO_SCROLL_MS);
+
+}
+
+
+/* =====================================================
+   TOUCH / SWIPE
+===================================================== */
+
+let touchStartX = 0;
+let touchEndX = 0;
+
+container.addEventListener(
     "touchstart",
-    (event) => {
-        const touch = event.touches[0];
+    event => {
 
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
+        touchStartX =
+            event.changedTouches[0].screenX;
+
     },
     {
         passive: true
     }
 );
 
-eventsContainer.addEventListener(
+container.addEventListener(
     "touchend",
-    (event) => {
-        const touch = event.changedTouches[0];
+    event => {
 
-        const deltaX =
-            touch.clientX - touchStartX;
+        touchEndX =
+            event.changedTouches[0].screenX;
 
-        const deltaY =
-            touch.clientY - touchStartY;
+        const difference =
+            touchStartX -
+            touchEndX;
 
-        /*
-         * Ignore normal vertical scrolling.
-         * Only react to a clear horizontal swipe.
-         */
-        if (
-            Math.abs(deltaX) < 60 ||
-            Math.abs(deltaX) < Math.abs(deltaY)
-        ) {
+        if(
+            Math.abs(difference) <
+            50
+        ){
+
             return;
+
         }
 
         const cards =
-            eventsContainer.querySelectorAll(
+            container.querySelectorAll(
                 ".event-card"
             );
 
-        if (!cards.length) return;
+        if(!cards.length)
+            return;
 
-        let currentIndex = 0;
+        if(difference > 0){
 
-        cards.forEach((card, index) => {
-            const rect =
-                card.getBoundingClientRect();
-
-            const containerRect =
-                eventsContainer.getBoundingClientRect();
-
-            const cardCenter =
-                rect.top + rect.height / 2;
-
-            const containerCenter =
-                containerRect.top +
-                containerRect.height / 2;
-
-            if (
-                Math.abs(
-                    cardCenter - containerCenter
-                ) <
-                Math.abs(
-                    cards[currentIndex]
-                        .getBoundingClientRect()
-                        .top +
-                    cards[currentIndex]
-                        .getBoundingClientRect()
-                        .height / 2 -
-                    containerCenter
-                )
-            ) {
-                currentIndex = index;
-            }
-        });
-
-        /*
-         * Swipe left → next event
-         * Swipe right → previous event
-         */
-        if (deltaX < 0) {
             currentIndex =
                 Math.min(
                     currentIndex + 1,
                     cards.length - 1
                 );
-        } else {
+
+        }
+        else{
+
             currentIndex =
                 Math.max(
                     currentIndex - 1,
                     0
                 );
+
         }
 
         cards[currentIndex].scrollIntoView({
@@ -1672,7 +2158,10 @@ eventsContainer.addEventListener(
             block: "center"
         });
 
-        updateDots(currentIndex);
+        updateDots(
+            currentIndex
+        );
+
     },
     {
         passive: true
@@ -1680,9 +2169,30 @@ eventsContainer.addEventListener(
 );
 
 
-/* --------------------------------
+/* =====================================================
+   VISIBILITY REFRESH
+===================================================== */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if(
+            document.visibilityState ===
+            "visible"
+        ){
+
+            loadEvents();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
    INITIAL LOAD
--------------------------------- */
+===================================================== */
 
 showSkeletons();
 
@@ -1691,51 +2201,43 @@ loadEvents();
 setupAutoScroll();
 
 
-/* --------------------------------
-   REFRESH WHEN TAB BECOMES ACTIVE
--------------------------------- */
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
-            loadEvents();
-        }
-    }
-);
-
-
-/* --------------------------------
-   PUBLIC API
--------------------------------- */
-
-window.NovaEvents = {
-    refresh: loadEvents,
-
-    extract: extractEvents,
-
-    normalize: normalizeEvent
-};
-
-
-/* --------------------------------
-   OPTIONAL PERIODIC REFRESH
--------------------------------- */
+/* =====================================================
+   PERIODIC REFRESH
+===================================================== */
 
 setInterval(
     () => {
-        if (
+
+        if(
             document.visibilityState ===
             "visible"
-        ) {
+        ){
+
             loadEvents();
+
         }
+
     },
     5 * 60 * 1000
 );
+
+
+/* =====================================================
+   PUBLIC API
+===================================================== */
+
+window.NovaEvents = {
+
+    refresh:
+        loadEvents,
+
+    extract:
+        extractEvents,
+
+    normalize:
+        normalizeEvent
+
+};
 
 </script>
 
