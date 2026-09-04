@@ -368,7 +368,6 @@ body{
 
 
 <script>
-"use strict";
 
 
 /* =========================================================
@@ -1444,4 +1443,315 @@ function getCache() {
         return null;
     }
       }
+      }
+
+async function fetchEvents() {
+    const controller = new AbortController();
+
+    const timeout = setTimeout(
+        () => controller.abort(),
+        10000
+    );
+
+    try {
+        const response = await fetch(
+            EVENTS_API,
+            {
+                method: "GET",
+                mode: "cors",
+                credentials: "omit",
+                cache: "no-store",
+                headers: {
+                    "Accept": "application/json"
+                },
+                signal: controller.signal
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+        const data = await response.json();
+
+        saveCache(data);
+
+        return data;
+
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+function render(events) {
+    eventsContainer.innerHTML = "";
+
+    if (!events || !events.length) {
+        createDots(0);
+        return;
+    }
+
+    createDots(events.length);
+
+    const fragment =
+        document.createDocumentFragment();
+
+    events.forEach((raw, index) => {
+        try {
+            const event =
+                normalizeEvent(raw);
+
+            if (!event.enabled) return;
+
+            const card =
+                createCard(event, index);
+
+            fragment.appendChild(card);
+
+        } catch (error) {
+            console.warn(
+                "Event skipped:",
+                error
+            );
+        }
+    });
+
+    eventsContainer.appendChild(fragment);
+}
+
+async function loadEvents() {
+    const cached = getCache();
+
+    if (cached) {
+        try {
+            const events =
+                extractEvents(cached);
+
+            render(events);
+        } catch (error) {
+            console.warn(
+                "Cache render failed:",
+                error
+            );
+        }
+    }
+
+    try {
+        const data =
+            await fetchEvents();
+
+        const events =
+            extractEvents(data);
+
+        render(events);
+
+    } catch (error) {
+        console.warn(
+            "Event fetch failed:",
+            error
+        );
+
+        if (!cached) {
+            eventsContainer.innerHTML = "";
+        }
+    }
+}
+
+function setupAutoScroll() {
+    let currentIndex = 0;
+
+    setInterval(() => {
+        const cards =
+            eventsContainer.querySelectorAll(
+                ".event-card"
+            );
+
+        if (!cards.length) return;
+
+        currentIndex =let touchStartX = 0;
+let touchStartY = 0;
+
+eventsContainer.addEventListener(
+    "touchstart",
+    (event) => {
+        const touch = event.touches[0];
+
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    },
+    {
+        passive: true
+    }
+);
+
+eventsContainer.addEventListener(
+    "touchend",
+    (event) => {
+        const touch = event.changedTouches[0];
+
+        const deltaX =
+            touch.clientX - touchStartX;
+
+        const deltaY =
+            touch.clientY - touchStartY;
+
+        /*
+         * Ignore normal vertical scrolling.
+         * Only react to a clear horizontal swipe.
+         */
+        if (
+            Math.abs(deltaX) < 60 ||
+            Math.abs(deltaX) < Math.abs(deltaY)
+        ) {
+            return;
+        }
+
+        const cards =
+            eventsContainer.querySelectorAll(
+                ".event-card"
+            );
+
+        if (!cards.length) return;
+
+        let currentIndex = 0;
+
+        cards.forEach((card, index) => {
+            const rect =
+                card.getBoundingClientRect();
+
+            const containerRect =
+                eventsContainer.getBoundingClientRect();
+
+            const cardCenter =
+                rect.top + rect.height / 2;
+
+            const containerCenter =
+                containerRect.top +
+                containerRect.height / 2;
+
+            if (
+                Math.abs(
+                    cardCenter - containerCenter
+                ) <
+                Math.abs(
+                    cards[currentIndex]
+                        .getBoundingClientRect()
+                        .top +
+                    cards[currentIndex]
+                        .getBoundingClientRect()
+                        .height / 2 -
+                    containerCenter
+                )
+            ) {
+                currentIndex = index;
+            }
+        });
+
+        /*
+         * Swipe left → next event
+         * Swipe right → previous event
+         */
+        if (deltaX < 0) {
+            currentIndex =
+                Math.min(
+                    currentIndex + 1,
+                    cards.length - 1
+                );
+        } else {
+            currentIndex =
+                Math.max(
+                    currentIndex - 1,
+                    0
+                );
+        }
+
+        cards[currentIndex].scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        updateDots(currentIndex);
+    },
+    {
+        passive: true
+    }
+);
+
+
+/* --------------------------------
+   INITIAL LOAD
+-------------------------------- */
+
+showSkeletons();
+
+loadEvents();
+
+setupAutoScroll();
+
+
+/* --------------------------------
+   REFRESH WHEN TAB BECOMES ACTIVE
+-------------------------------- */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+            loadEvents();
+        }
+    }
+);
+
+
+/* --------------------------------
+   PUBLIC API
+-------------------------------- */
+
+window.NovaEvents = {
+    refresh: loadEvents,
+
+    extract: extractEvents,
+
+    normalize: normalizeEvent
+};
+
+
+/* --------------------------------
+   OPTIONAL PERIODIC REFRESH
+-------------------------------- */
+
+setInterval(
+    () => {
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+            loadEvents();
+        }
+    },
+    5 * 60 * 1000
+);
+
+</script>
+
+</body>
+</html>
+            (currentIndex + 1) %
+            cards.length;
+
+        cards[currentIndex].scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        updateDots(currentIndex);
+
+    }, 5000);
+      }
+      
     
